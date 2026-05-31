@@ -2,7 +2,7 @@
 群晖NAS网页监控
 
 ## 系统介绍
-Synology-NAS-Web-Monitoring是一个简约风格的群晖NAS网页监控，使用群晖系统自带的WebAPI，无需安装任何插件或者拉取Docker，所有数据直接从群晖系统读取，适配电脑手机多种设备页面，使用PHP+MySQL编写。
+Synology-NAS-Web-Monitoring是一个简约风格的群晖NAS网页监控，使用群晖系统自带的WebAPI，无需安装任何插件或者拉取Docker，所有数据直接从群晖系统读取，适配电脑手机等多种设备页面，使用PHP+MySQL编写。
 
 ## 数据库结构
 - `pc` 表：存储基础信息，包括登录账号密码，群晖内网链接等等
