@@ -367,7 +367,8 @@ if (isset($_GET['api']) && $_GET['api'] === 'get_status' && $is_logged_in) {
                 <div class="login-tips mt-4">
                    <p>1. 适配环境：DSM7.2，PHP8.2，MariaDB10</p>
                    <p>2. 需要导入数据库文件并修改部分信息</p>
-                   <p>3. 如遇问题请发邮件：admin@tzele.me</p>
+                   <p>3. 群晖登录账号不要开启2FA功能</p>
+                   <p>4. 如遇问题请发邮件：admin@tzele.me</p>
                 </div>
             </div>
         </div>
