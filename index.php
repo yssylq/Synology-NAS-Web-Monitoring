@@ -188,8 +188,8 @@ if (isset($_GET['api']) && $_GET['api'] === 'get_status' && $is_logged_in) {
             // 提取硬盘实时读写速度与利用率
             if (isset($util_data['data']['disk']['disk']) && is_array($util_data['data']['disk']['disk'])) {
                 foreach ($util_data['data']['disk']['disk'] as $disk) {
-                    // 过滤掉 USB 磁盘，如果需要显示 USB 可以把下面这行 if 删掉
-                    if (($disk['type'] ?? '') === 'usb') continue; 
+                    // 默认加载 USB 磁盘，如果需要屏蔽 USB 可以把下面这行 if 前面的 // 删掉
+                    //if (($disk['type'] ?? '') === 'usb') continue; 
 
                     $output['disks'][] = [
                         'name' => $disk['display_name'] ?? $disk['device'],
