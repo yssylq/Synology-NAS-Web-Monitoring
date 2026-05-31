@@ -5,8 +5,8 @@ error_reporting(0);
 session_start();
 
 $DB_HOST = 'localhost';
-$DB_USER = 'root';      // ⚠️ 请替换为你的数据库账号
-$DB_PASS = 'Sdb920824@';    // ⚠️ 请替换为你的数据库密码
+$DB_USER = '需要修改';      // ⚠️ 请替换为你的数据库账号
+$DB_PASS = '需要修改';    // ⚠️ 请替换为你的数据库密码
 $DB_NAME = 'nas_monitor';   // ⚠️ 请替换为你的数据库名
 
 $page_title = "NAS Monitor";
