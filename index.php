@@ -127,7 +127,17 @@ $is_logged_in = isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true;
 // ===================== API 数据接口 =====================
 if (isset($_GET['api']) && $_GET['api'] === 'get_status' && $is_logged_in) {
     header('Content-Type: application/json');
-    
+    // --- 新增：检查浏览器是否发来了“用户正在看”的信号 ---
+    // $_SERVER['HTTP_'] 会自动接收浏览器发来的自定义头
+    $userIsActive = isset($_SERVER['HTTP_X_USER_ACTIVE']) && $_SERVER['HTTP_X_USER_ACTIVE'] == '1';
+
+    // 如果用户不活跃（没看页面），直接返回空数据，不执行下面的 cURL
+    // 这样 NAS 就不会被唤醒
+    if (!$userIsActive) {
+        echo json_encode(['cpu_percent' => 0, 'mem_percent' => 0, 'message' => 'idle']);
+        exit;
+    }
+    // --- 新增结束 ---
     if (!isset($_SESSION['last_net_tx'])) $_SESSION['last_net_tx'] = 0;
     if (!isset($_SESSION['last_net_rx'])) $_SESSION['last_net_rx'] = 0;
     if (!isset($_SESSION['last_time'])) $_SESSION['last_time'] = 0;
@@ -188,7 +198,7 @@ if (isset($_GET['api']) && $_GET['api'] === 'get_status' && $is_logged_in) {
             // 提取硬盘实时读写速度与利用率
             if (isset($util_data['data']['disk']['disk']) && is_array($util_data['data']['disk']['disk'])) {
                 foreach ($util_data['data']['disk']['disk'] as $disk) {
-                    // 默认加载 USB 磁盘，如果需要屏蔽 USB 可以把下面这行 if 前面的 // 删掉
+                    // 过滤掉 USB 磁盘，如果需要显示 USB 可以把下面这行 if 删掉
                     //if (($disk['type'] ?? '') === 'usb') continue; 
 
                     $output['disks'][] = [
@@ -538,9 +548,25 @@ const diskHistoryChart = new Chart(diskCtx, {
         plugins: { legend: { labels: { color: () => document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#666' } } }
     }
 });
+// 1. 在 updateStatus 函数外部定义一个变量，记录页面是否在前台
+let isPageVisible = true;
 
+// 2. 监听页面可见性变化（当用户切换浏览器标签页时触发）
+document.addEventListener('visibilitychange', function() {
+    isPageVisible = !document.hidden;
+});
 function updateStatus() {
-    fetch('?api=get_status')
+	// 3. 如果页面不在前台（用户没看），直接返回，不发请求
+    if (!isPageVisible) {
+        return;
+    }
+    // 4. 发送请求时，带上“用户活跃”的标记 (X-User-Active: 1)
+    fetch('?api=get_status', {
+        method: 'GET',
+        headers: {
+            'X-User-Active': '1' // 这个头会被 PHP 的 $_SERVER['HTTP_X_USER_ACTIVE'] 接收
+        }
+    })
         .then(response => response.json())
         .then(data => {
             if(data.error_debug) {
